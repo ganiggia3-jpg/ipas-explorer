@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123b68">
+<title>IPAS Explorer — Petualangan Sistem Peredaran Darah</title>
+<style>
+:root{--navy:#123b68;--teal:#087e83;--gold:#facc63;--bg:#f3f7fb;--ink:#172b45;--muted:#62748a;--line:#dce5ee;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+.wrap{max-width:960px;margin:auto;padding:18px}.hero{background:linear-gradient(135deg,#102d55,#176b91 65%,#18a6a0);color:white;border-radius:20px;padding:24px;overflow:hidden}
+h1,h2,h3,p{margin-top:0}.hero h1{font-size:clamp(2rem,7vw,3.4rem);line-height:1.05;margin:18px 0 8px}.hero .heart{font-size:76px;text-align:center;margin:20px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;padding:17px;margin:14px 0;box-shadow:0 4px 16px #123b6809}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:7px 0 12px}
+.primary{background:var(--teal);color:white;border:0;border-radius:11px;padding:12px 16px;font-weight:750}.gold{background:var(--gold);color:#26364b;border:0;border-radius:11px;padding:12px 16px;font-weight:800}
+.secondary{background:white;border:1px solid var(--line);border-radius:10px;padding:10px 13px;color:var(--ink)}
+.pill{font-size:11px;font-weight:800;border-radius:30px;padding:4px 9px;background:#e4f5f3;color:#126e70;display:inline-block}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#ffffff20;border-radius:12px;padding:12px}
+.mission{width:100%;text-align:left;background:white;border:1px solid var(--line);border-radius:13px;padding:14px;color:var(--ink)}.mission.done{border-color:#159b65}.mission.active{outline:2px solid #0d9993}
+.muted{color:var(--muted)}.small{font-size:13px}.bar{height:9px;background:#dce5ee;border-radius:20px;overflow:hidden}.bar span{display:block;height:100%;background:#16a39a}
+.answer{width:100%;text-align:left;background:white;border:1px solid var(--line);padding:11px;border-radius:10px;margin:5px 0;color:var(--ink)}.answer.chosen{border:2px solid var(--teal);background:#e9f7f5}.answer.correct{border:2px solid #159b65;background:#eaf8f0}.answer.wrong{border:2px solid #dc6464;background:#fff0f0}
+.step{padding:10px;border:1px dashed var(--line);border-radius:9px;margin:5px 0}.feedback{padding:12px;background:#f0f5f9;border-radius:10px;margin:12px 0}
+.hidden{display:none!important}.actions{display:flex;gap:9px;flex-wrap:wrap}.actions button{flex:1}.tag{font-size:11px;letter-spacing:.08em;font-weight:800;color:#168b88}
+@media(max-width:580px){.wrap{padding:12px}.grid{grid-template-columns:1fr}.hero{padding:19px}.card{padding:14px}}
+@media print{body{background:white}.no-print{display:none!important}#certificate{display:block!important}.wrap{max-width:none}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section id="welcome" class="hero">
+ <div style="display:flex;justify-content:space-between;gap:8px"><b class="small">MEDIA PEMBELAJARAN IPAS • FASE C</b><span class="pill">KELAS VI</span></div>
+ <h1>IPAS<br>EXPLORER 🚀</h1><p>Petualangan Menjelajahi Sistem Peredaran Darah Manusia</p>
+ <div class="heart">🫀</div>
+ <div style="background:#ffffff20;padding:13px;border-radius:12px"><b>Halo, Penjelajah Sains!</b><p class="small" style="margin:5px 0 0">Masukkan namamu untuk memulai misi.</p></div>
+ <label for="studentName"><b class="small">Nama lengkap murid</b></label>
+ <input id="studentName" maxlength="55" placeholder="Tuliskan nama lengkapmu..." style="background:white;color:#172b45;border:0">
+ <button id="start" class="gold" style="width:100%">MULAI PETUALANGAN →</button><p id="nameError" class="small hidden" style="color:#ffe4b5;margin:8px 0 0">Tuliskan nama terlebih dahulu.</p>
+</section>
+<section id="dashboard" class="hidden">
+ <div class="hero">
+  <span class="small">DASHBOARD PENJELAJAH</span><h2 style="margin:12px 0 3px">Halo, <span id="displayName"></span>! 👋</h2><p class="small">Selesaikan semua misi petualanganmu.</p>
+  <div class="stats"><div class="stat"><span class="small">TOTAL SKOR</span><div style="font-size:27px;font-weight:900"><span id="score">0</span> XP</div></div><div class="stat"><span class="small">MISI SELESAI</span><div style="font-size:27px;font-weight:900"><span id="completed">0</span>/5</div></div></div>
+  <div class="small" style="display:flex;justify-content:space-between;margin-top:13px"><span>Progres petualangan</span><span id="progressText">0%</span></div><div class="bar" style="background:#ffffff45;margin-top:6px"><span id="progressBar" style="width:0%;background:#facc63"></span></div>
+ </div>
+ <div class="card"><div class="tag">PETA PETUALANGAN</div><h2 style="margin:5px 0">Pilih Misi Kamu 🗺️</h2><p class="muted small">Pelajari materi, lakukan simulasi, dan selesaikan tantangan.</p><div id="missionList" class="grid"></div></div>
+ <div id="workArea" class="card hidden"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="tag" id="missionLabel"></span><button id="back" class="secondary small">← Peta misi</button></div><div id="missionContent" style="margin-top:15px"></div></div>
+ <div class="card"><b>🏅 Koleksi lencana</b><div id="badges" class="small muted" style="margin-top:10px">Belum ada lencana. Selesaikan misi untuk mendapatkannya!</div></div>
+ <div class="actions no-print"><button id="certificateBtn" class="secondary" disabled>🏆 Lihat sertifikat</button><button id="reset" class="secondary">Mulai ulang progres</button></div>
+</section>
+<section id="certificate" class="card hidden" style="text-align:center;padding:35px;border:8px double #176b91">
+ <div style="font-size:48px">🏆</div><div class="tag">SERTIFIKAT PENJELAJAH SAINS</div><h1 style="color:#176b91;margin:12px 0">SELAMAT!</h1><p>Diberikan kepada</p><h2 id="certName"></h2><p>Atas keberhasilan menyelesaikan seluruh misi pembelajaran<br><b>IPAS Explorer: Sistem Peredaran Darah Manusia</b></p><h2 id="certScore" style="color:#176b91"></h2><p>IPAS Fase C • Kelas VI</p><p>Pengembang: Ganig<br>SD Muhammadiyah 1 Tulungagung</p><p style="margin-top:35px">________________________<br>Guru Pengembang</p><button onclick="window.print()" class="primary no-print">Cetak / Simpan PDF</button><button id="closeCert" class="secondary no-print">Kembali</button>
+</section>
+<footer class="small muted" style="text-align:center;padding:15px">IPAS EXPLORER • Prototipe media pembelajaran kelas VI</footer>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);let name='',score=0,done=[],active=0;
+const missions=[['📖','Misi 01','Kenali Sistem Peredaran Darah','Konsep dasar dan fungsi sistem peredaran darah.'],['🫀','Misi 02','Jelajahi Organ Jantung','Bagian jantung dan pembuluh darah.'],['🔬','Misi 03','Laboratorium Aliran Darah','Simulasi peredaran darah besar dan kecil.'],['🧩','Misi 04','Tantangan Susun Jalur','Susun perjalanan darah dengan tepat.'],['🎯','Misi 05','Ujian Penjelajah Sains','Uji pemahamanmu melalui kuis.']];
+const qs=[
+['Organ utama yang memompa darah ke seluruh tubuh adalah ...',['Paru-paru','Jantung','Lambung','Ginjal'],1,'Jantung memompa darah melalui pembuluh darah.'],
+['Bagian jantung yang memompa darah menuju paru-paru adalah ...',['Bilik kanan','Bilik kiri','Serambi kanan','Serambi kiri'],0,'Bilik kanan memompa darah menuju paru-paru.'],
+['Pembuluh darah yang membawa darah keluar dari jantung disebut ...',['Vena','Kapiler','Arteri','Alveolus'],2,'Arteri membawa darah keluar dari jantung.'],
+['Peredaran darah kecil berlangsung melalui jalur ...',['Jantung–tubuh–jantung','Jantung–paru-paru–jantung','Paru-paru–tubuh','Tubuh–paru-paru'],1,'Peredaran darah kecil menghubungkan jantung dengan paru-paru.'],
+['Pertukaran oksigen dan karbon dioksida berlangsung terutama di ...',['Katup jantung','Kapiler paru-paru','Tulang','Otot jantung'],1,'Kapiler di sekitar alveolus menjadi tempat pertukaran gas.'],
+['Darah dari seluruh tubuh kembali ke jantung melalui ...',['Vena kava','Aorta','Arteri pulmonalis','Vena pulmonalis'],0,'Vena kava membawa darah dari tubuh menuju serambi kanan.'],
+['Ruang jantung yang memompa darah kaya oksigen ke seluruh tubuh adalah ...',['Serambi kanan','Bilik kanan','Serambi kiri','Bilik kiri'],3,'Bilik kiri memompa darah ke aorta dan seluruh tubuh.'],
+['Pembuluh darah terkecil yang menghubungkan arteriol dan venula adalah ...',['Aorta','Kapiler','Vena kava','Arteri pulmonalis'],1,'Kapiler merupakan pembuluh darah sangat kecil tempat pertukaran zat.']
+];
+function complete(i,pts){if(!done.includes(i)){done.push(i);score+=pts}render()}
+function render(){
+ $('score').textContent=score;$('completed').textContent=done.length;$('progressText').textContent=Math.round(done.length/5*100)+'%';$('progressBar').style.width=(done.length/5*100)+'%';
+ $('missionList').innerHTML=missions.map((m,i)=>`<button class="mission ${active===i?'active':''} ${done.includes(i)?'done':''}" data-i="${i}"><b>${m[0]} ${m[1]}</b><div><b>${m[2]}</b></div><div class="small muted">${m[3]}</div><div class="small" style="margin-top:5px">${done.includes(i)?'✅ Selesai':'🔓 Buka misi'}</div></button>`).join('');
+ document.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>open(+b.dataset.i));
+ $('badges').textContent=done.length?done.map(i=>'🏅 '+missions[i][2]).join('　•　'):'Belum ada lencana.';
+ $('certificateBtn').disabled=done.length!==5;
+}
+function open(i){active=i;$('workArea').classList.remove('hidden');$('missionLabel').textContent=missions[i][1];const c=$('missionContent');
+ const finish=(id,pts)=>{complete(i,pts);$(id).disabled=true;$(id).textContent='Misi selesai ✓'};
+ if(i===0)c.innerHTML=`<h2>🌱 Apa itu sistem peredaran darah?</h2><p>Sistem peredaran darah adalah sistem yang mengalirkan darah ke seluruh tubuh untuk mengangkut oksigen dan zat makanan serta membawa zat sisa metabolisme.</p><div class="grid"><div class="step" style="text-align:center"><div style="font-size:35px">🫀</div><b>Jantung</b><br>Memompa darah</div><div class="step" style="text-align:center"><div style="font-size:35px">🩸</div><b>Darah</b><br>Mengangkut berbagai zat</div><div class="step" style="text-align:center"><div style="font-size:35px">〰️</div><b>Pembuluh darah</b><br>Jalur aliran darah</div></div><h3>Fungsi sistem peredaran darah</h3><ul><li>Mengangkut oksigen dan zat makanan.</li><li>Membawa karbon dioksida dan zat sisa.</li><li>Membantu mengatur suhu tubuh.</li><li>Mengedarkan komponen pertahanan tubuh.</li></ul><div class="feedback"><b>💡 Tahukah kamu?</b><br>Jantung bekerja terus-menerus memompa darah sepanjang hidup kita.</div><button id="f0" class="primary">Selesaikan Misi (+100 XP)</button>`;
+ if(i===1)c.innerHTML=`<h2>🫀 Kenali bagian jantung</h2><div style="font-size:70px;text-align:center">🫀</div><p>Jantung manusia memiliki empat ruang utama yang bekerja bersama mengalirkan darah.</p><div class="grid">${[['Serambi kanan','Menerima darah dari seluruh tubuh.'],['Serambi kiri','Menerima darah dari paru-paru.'],['Bilik kanan','Memompa darah menuju paru-paru.'],['Bilik kiri','Memompa darah menuju seluruh tubuh.']].map(x=>`<div class="step"><b>${x[0]}</b><br>${x[1]}</div>`).join('')}</div><h3 style="margin-top:18px">Tiga jenis pembuluh darah</h3><p><b>Arteri:</b> membawa darah keluar dari jantung.</p><p><b>Vena:</b> membawa darah menuju jantung.</p><p><b>Kapiler:</b> tempat pertukaran zat antara darah dan jaringan.</p><div class="feedback">Catatan: arteri tidak selalu membawa darah kaya oksigen. Arteri pulmonalis membawa darah menuju paru-paru yang relatif rendah oksigen.</div><button id="f1" class="primary">Selesaikan Misi (+100 XP)</button>`;
+ if(i===2)c.innerHTML=`<h2>🔬 Laboratorium Aliran Darah</h2><p>Pilih jalur untuk melihat perjalanan darah.</p><div class="actions"><button id="large" class="primary">Peredaran besar</button><button id="small" class="secondary">Peredaran kecil</button></div><div id="flow" class="feedback">Pilih jenis peredaran darah di atas.</div><p class="small muted">Peredaran darah manusia disebut peredaran darah ganda karena dalam satu siklus lengkap, darah melewati jantung dua kali.</p><button id="f2" class="primary">Selesaikan Misi (+150 XP)</button>`;
+ if(i===3)c.innerHTML=`<h2>🧩 Susun Jalur Peredaran Darah</h2><p>Pilih tantangan, lalu pilih kartu secara berurutan.</p><div class="actions"><button id="gl" class="secondary">Jalur besar</button><button id="gs" class="secondary">Jalur kecil</button></div><h3 id="gameTitle">Pilih tantanganmu</h3><div id="cards"></div><div id="gameResult" class="feedback hidden"></div><button id="checkGame" class="primary" disabled>Periksa urutan</button><button id="retry" class="secondary">Ulangi susunan</button><button id="f3" class="primary hidden">Selesaikan Misi (+150 XP)</button>`;
+ if(i===4)c.innerHTML=`<h2>🎯 Ujian Penjelajah Sains</h2><p class="small muted">Jawablah 8 pertanyaan. Setiap jawaban benar bernilai 25 XP.</p><div class="small" id="qCount"></div><div class="bar"><span id="qBar" style="width:12.5%"></span></div><div id="quizBody" style="margin-top:15px"></div><div id="quizResult" class="hidden"></div>`;
+ if(i===0)$('f0').onclick=()=>finish('f0',100);
+ if(i===1)$('f1').onclick=()=>finish('f1',100);
+ if(i===2){const show=t=>{let a=t==='large';let list=a?['Bilik kiri','Aorta','Seluruh tubuh (kapiler)','Vena kava','Serambi kanan']:['Bilik kanan','Arteri pulmonalis','Paru-paru (kapiler)','Vena pulmonalis','Serambi kiri'];$('flow').innerHTML='<b>'+ (a?'Peredaran darah besar':'Peredaran darah kecil')+'</b>'+list.map((v,j)=>`<div class="step">${j+1}. ${v}</div>`).join('<div style="text-align:center">↓</div>')};$('large').onclick=()=>show('large');$('small').onclick=()=>show('small');$('f2').onclick=()=>finish('f2',150)}
+ if(i===3)game();
+ if(i===4)quiz();
+ $('workArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function game(){
+ let type='large',order=[],checked=false;const data={large:['Bilik kiri','Aorta','Seluruh tubuh (kapiler)','Vena kava','Serambi kanan'],small:['Bilik kanan','Arteri pulmonalis','Paru-paru (kapiler)','Vena pulmonalis','Serambi kiri']};
+ const draw=()=>{order=[];checked=false;$('gameTitle').textContent='Urutkan: '+(type==='large'?'Peredaran darah besar':'Peredaran darah kecil');let arr=[...data[type]].sort(()=>Math.random()-.5);$('cards').innerHTML=arr.map(v=>`<button class="answer" data-v="${v}">${v}</button>`).join('');$('cards').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(checked||order.includes(b.dataset.v))return;order.push(b.dataset.v);b.classList.add('chosen');b.textContent=order.length+'. '+b.dataset.v;$('checkGame').disabled=order.length!==5});$('checkGame').disabled=true;$('gameResult').classList.add('hidden');$('f3').classList.add('hidden');$('checkGame').classList.remove('hidden')};
+ $('gl').onclick=()=>{type='large';draw()};$('gs').onclick=()=>{type='small';draw()};$('retry').onclick=draw;
+ $('checkGame').onclick=()=>{checked=true;let ok=order.every((v,j)=>v===data[type][j]);$('gameResult').classList.remove('hidden');$('gameResult').innerHTML=ok?'<b>🎉 Hebat! Urutanmu benar!</b>':'<b>Belum tepat.</b><br>Urutan benar: '+data[type].join(' → ');if(ok){$('f3').classList.remove('hidden');$('checkGame').classList.add('hidden')}else{$('gameResult').innerHTML+='<br><button id="tryAgain" class="secondary" style="margin-top:8px">Coba lagi</button>';$('tryAgain').onclick=draw}};
+ $('f3').onclick=()=>{complete(3,150);$('f3').disabled=true;$('f3').textContent='Misi selesai ✓'};draw();
+}
+function quiz(){
+ let idx=0,ans={};const draw=()=>{let q=qs[idx];$('qCount').textContent=`Pertanyaan ${idx+1} dari 8`; $('qBar').style.width=((idx+1)/8*100)+'%';$('quizBody').innerHTML=`<b>${idx+1}. ${q[0]}</b><div style="margin-top:10px">${q[1].map((v,j)=>`<button class="answer ${ans[idx]===j?'chosen':''}" data-a="${j}">${String.fromCharCode(65+j)}. ${v}</button>`).join('')}</div><button id="next" class="primary" disabled style="width:100%;margin-top:12px">${idx===7?'Lihat hasil':'Pertanyaan berikutnya →'}</button>`;$('quizBody').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{ans[idx]=+b.dataset.a;$('quizBody').querySelectorAll('[data-a]').forEach(x=>x.classList.toggle('chosen',x===b));$('next').disabled=false});$('next').onclick=()=>{if(idx<7){idx++;draw()}else{let n=qs.filter((q,j)=>ans[j]===q[2]).length;complete(4,n*25);$('quizBody').innerHTML='';$('qCount').textContent='Ujian selesai';$('qBar').style.width='100%';$('quizResult').classList.remove('hidden');$('quizResult').innerHTML=`<div class="feedback"><h2>🏆 Nilaimu: ${Math.round(n/8*100)}</h2><b>${n} dari 8 jawaban benar • ${n*25} XP</b><p class="small">Periksa pembahasan untuk memperkuat pemahamanmu.</p>${qs.map((q,j)=>`<p class="small"><b>${j+1}. ${ans[j]===q[2]?'✓ Benar':'✗ Belum tepat'}</b><br>${q[3]}</p>`).join('')}</div><button id="retryQuiz" class="secondary">Ulangi kuis</button>`;$('retryQuiz').onclick=()=>{idx=0;ans={};$('quizResult').classList.add('hidden');draw()}}};};draw();
+}
+$('start').onclick=()=>{name=$('studentName').value.trim();if(!name){$('nameError').classList.remove('hidden');return}$('displayName').textContent=name;$('welcome').classList.add('hidden');$('dashboard').classList.remove('hidden');render()};
+$('studentName').addEventListener('keydown',e=>{if(e.key==='Enter')$('start').click()});
+$('back').onclick=()=>$('workArea').classList.add('hidden');
+$('reset').onclick=()=>{if(confirm('Hapus progres petualangan ini?')){score=0;done=[];$('workArea').classList.add('hidden');render()}};
+$('certificateBtn').onclick=()=>{if(done.length!==5)return;$('dashboard').classList.add('hidden');$('certificate').classList.remove('hidden');$('certName').textContent=name;$('certScore').textContent=score+' XP'};
+$('closeCert').onclick=()=>{$('certificate').classList.add('hidden');$('dashboard').classList.remove('hidden')};
+})();
+</script>
+</body>
+</html>
